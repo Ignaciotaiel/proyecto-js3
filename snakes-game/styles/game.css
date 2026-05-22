@@ -1,0 +1,392 @@
+/* game.css */
+/* Estilos específicos para la pantalla de juego (Máquina Arcade Virtual) */
+
+/* Nuevo layout de Arcade Machine */
+.arcade-machine-frame {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+  background-color: #050508;
+  z-index: 10;
+}
+
+/* Paneles Laterales Decorativos */
+.side-panel {
+  position: relative;
+  background: repeating-linear-gradient(
+    45deg,
+    #0a0a14,
+    #0a0a14 15px,
+    #050508 15px,
+    #050508 30px
+  );
+  height: 140px; /* Alto en móvil */
+}
+
+@media (min-width: 1200px) {
+  .side-panel {
+    height: 100%; /* Alto en desktop */
+  }
+}
+
+.side-panel.left-panel {
+  border-right: 4px solid var(--accent-p1);
+  box-shadow: inset -20px 0 50px rgba(57, 255, 20, 0.15);
+}
+
+.side-panel.right-panel {
+  border-left: 4px solid var(--accent-p2);
+  box-shadow: inset 20px 0 50px rgba(255, 7, 58, 0.15);
+}
+
+/* HUD Lateral */
+.side-hud {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  z-index: 10;
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  padding: 2rem;
+  border-radius: 15px;
+  border: 2px solid #222;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+}
+
+.p1-hud { border-color: var(--accent-p1); box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.1); }
+.p2-hud { border-color: var(--accent-p2); box-shadow: inset 0 0 20px rgba(255, 7, 58, 0.1); }
+
+/* Marcas de agua gigantes */
+.panel-watermark {
+  font-size: clamp(5rem, 15vw, 20rem);
+  font-family: 'Press Start 2P', monospace;
+  opacity: 0.05;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  user-select: none;
+  pointer-events: none;
+}
+
+.p1-watermark {
+  color: var(--accent-p1);
+  left: 5%;
+}
+
+.p2-watermark {
+  color: var(--accent-p2);
+  right: 5%;
+}
+
+/* Centro: Pantalla (Monitor CRT virtual) */
+.center-screen {
+  background-color: #000;
+  box-shadow: inset 0 0 80px rgba(0,0,0,1);
+  height: calc(100vh - 60px - 140px); /* Alto en móvil (total - navbar - sidepanels) */
+}
+
+@media (min-width: 1200px) {
+  .center-screen {
+    height: 100%; /* Alto en desktop */
+  }
+}
+
+
+
+.level-indicator {
+  color: var(--text-muted);
+  font-size: clamp(0.7rem, 2vw, 1.2rem);
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* ===== Selección de Niveles (Responsive) ===== */
+.level-select-container {
+  width: 100%;
+  max-width: 1600px; /* Expandido para no dejar espacios negros */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2vh 4vw; /* Padding dinámico */
+}
+
+.level-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.level-header .arcade-title {
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  color: #fff;
+  text-shadow: 0 0 10px #fff;
+  margin-bottom: 0.5rem;
+  animation: none; /* Quitamos animaciones fuertes para mantenerlo limpio */
+}
+
+.level-header .arcade-subtitle {
+  color: var(--text-muted);
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  letter-spacing: 2px;
+}
+
+.stage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: 100%;
+  margin-bottom: 3rem;
+}
+
+/* Media Queries para Responsive Grid */
+@media (max-width: 900px) {
+  .stage-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stage-grid {
+    grid-template-columns: 1fr;
+  }
+  .level-select-container {
+    padding: 1rem;
+  }
+}
+
+.stage-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-card);
+  border: 4px solid var(--text-muted);
+  padding: clamp(0.5rem, 2vh, 1.5rem);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-muted);
+  width: 100%;
+  min-height: 100px; /* Reducido para evitar overflow vertical en laptops */
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+
+.stage-card:hover, .stage-card.selected {
+  border-color: var(--accent-neutral);
+  color: var(--accent-neutral);
+  box-shadow: 0 0 15px var(--accent-neutral-glow), inset 0 0 15px var(--accent-neutral-glow);
+  text-shadow: 0 0 10px var(--accent-neutral-glow);
+  transform: scale(1.02);
+}
+
+.stage-number {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: clamp(0.5rem, 2vh, 1rem);
+  display: block;
+}
+
+.stage-speed {
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  line-height: 1.5;
+}
+
+#btn-go-game {
+  margin: 0 auto 2rem auto;
+  padding: 1rem 3rem;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1400px;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.player-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-card);
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  min-width: 150px;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.p1-score {
+  border-color: var(--accent-p1);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.2), inset 0 0 10px rgba(57, 255, 20, 0.1);
+}
+
+.p2-score {
+  border-color: var(--accent-p2);
+  box-shadow: 0 0 10px rgba(255, 7, 58, 0.2), inset 0 0 10px rgba(255, 7, 58, 0.1);
+}
+
+.score-name {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.p1-score .score-name { color: var(--accent-p1); }
+.p2-score .score-name { color: var(--accent-p2); }
+
+.score-value {
+  font-size: 2.5rem;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Bisel del Canvas Gigante */
+.canvas-bezel.maximized-bezel {
+  padding: 1rem;
+  background: #111;
+  border-radius: 15px;
+  border: 6px solid #222;
+  box-shadow: 
+    inset 0 0 40px rgba(0,0,0,0.9),
+    0 20px 60px rgba(0,0,0,1);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas-wrapper {
+  position: relative;
+  border: 4px solid #333;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+  background: #000;
+  overflow: hidden;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-wrapper.playing {
+  border-color: var(--accent-neutral);
+  box-shadow: 0 0 30px var(--accent-neutral-glow), inset 0 0 20px var(--accent-neutral-glow);
+}
+
+/* Overlay de pausa/muerte */
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 20;
+  backdrop-filter: blur(2px);
+}
+
+.overlay-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--accent-neutral);
+  text-shadow: 0 0 20px var(--accent-neutral-glow);
+  margin-bottom: 1rem;
+}
+
+.overlay-subtitle {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.btn-game-action {
+  font-family: 'Press Start 2P', monospace;
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  animation: pulse-border 2s infinite;
+}
+
+.btn-game-action:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 0 20px #fff;
+}
+
+/* El control board inferior */
+.bottom-panel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.arcade-controls-board.maximized-board {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 2rem;
+  background: linear-gradient(to bottom, #1a1a2e, #0a0a14);
+  border: 3px solid #333;
+  border-radius: 10px;
+  box-shadow: inset 0 5px 15px rgba(255,255,255,0.05), 0 10px 20px rgba(0,0,0,0.8);
+}
+
+.joystick-hint {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.joystick-hint span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: #0f0f1a;
+  border: 2px solid #555;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.8rem;
+  box-shadow: 0 5px 0 #222, inset 0 2px 5px rgba(255,255,255,0.1);
+}
+
+.j1-hint span { 
+  border-color: var(--accent-p1); 
+  color: var(--accent-p1);
+  box-shadow: 0 5px 0 #005c00, inset 0 2px 10px rgba(57, 255, 20, 0.2);
+}
+
+.j2-hint span { 
+  border-color: var(--accent-p2); 
+  color: var(--accent-p2); 
+  box-shadow: 0 5px 0 #6b0000, inset 0 2px 10px rgba(255, 7, 58, 0.2);
+}
+
+.credits-text {
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  color: var(--accent-neutral);
+  text-shadow: 0 0 10px var(--accent-neutral-glow);
+}
+
+.blink-text {
+  animation: blink 1.5s step-end infinite;
+}
+
+/* Ocultar elementos */
+.hidden { display: none !important; }
+
+

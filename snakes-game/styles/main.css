@@ -1,0 +1,362 @@
+/* main.css — Estilos Globales Arcade Retro */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --bg-color: #030305;
+  --accent-p1: #39ff14;
+  --accent-p1-glow: rgba(57, 255, 20, 0.6);
+  --accent-p2: #ff073a;
+  --accent-p2-glow: rgba(255, 7, 58, 0.6);
+  --accent-neutral: #0ff;
+  --accent-neutral-glow: rgba(0, 255, 255, 0.6);
+  --text-primary: #fff;
+  --text-muted: #555;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Press Start 2P', cursive;
+  user-select: none;
+}
+
+/* En Desktop bloqueamos el scroll para inmersión arcade estricta */
+@media (min-width: 992px) {
+  html, body {
+    overflow: hidden;
+  }
+}
+
+/* En Móvil permitimos scroll vertical porque los elementos se apilan */
+@media (max-width: 991px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Press Start 2P', cursive !important;
+}
+
+/* ===== Efecto Pantalla CRT ===== */
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 3px, 3px 100%;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+}
+
+/* Oscurecimiento de bordes estilo monitor viejo */
+.crt-overlay::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+  z-index: 10000;
+}
+
+/* ===== Layout Principal ===== */
+.arcade-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  z-index: 10;
+  background-color: transparent;
+  padding: 2rem;
+}
+
+@media (min-width: 992px) {
+  .arcade-container {
+    height: 100vh;
+  }
+}
+
+/* ===== Títulos ===== */
+.arcade-title {
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px var(--accent-p1),
+    0 0 40px var(--accent-p1);
+  animation: neon-flicker 1.5s infinite alternate;
+  line-height: 1.5;
+}
+
+.giant-title {
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 1.1;
+  margin-bottom: 0;
+}
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--accent-p1), 0 0 40px var(--accent-p1);
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+
+
+.vs-text {
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--text-muted);
+  text-shadow: 0 0 10px #000;
+  animation: blink 2s infinite;
+}
+
+.arcade-label {
+  display: block;
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   BARRA DE NAVEGACIÓN SUPERIOR FIJA
+   ========================================================================== */
+.top-nav-bar {
+  width: 100%;
+  height: 60px;
+  background: #050508;
+  border-bottom: 2px solid var(--accent-neutral);
+  box-shadow: 0 5px 15px rgba(0,255,255,0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 999;
+}
+
+/* Modificar el botón de volver para que encaje y no flote */
+.top-nav-bar .btn-back {
+  position: static;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-neutral);
+  color: #fff;
+  font-size: 0.8rem;
+  box-shadow: none;
+  margin: 0;
+}
+
+.top-nav-bar .btn-back:hover {
+  background: var(--accent-neutral);
+  color: #000;
+  box-shadow: 0 0 10px var(--accent-neutral-glow);
+}
+
+/* Ajuste general para contenedores cuando hay nav-bar */
+.main-with-nav {
+  min-height: calc(100vh - 60px) !important;
+  padding: 1rem 2rem;
+}
+
+@media (min-width: 992px) {
+  .main-with-nav {
+    height: calc(100vh - 60px) !important;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 991px) {
+  .main-with-nav {
+    height: auto !important;
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================================================
+   TACÓMETRO DE VELOCIDAD (LEVEL SELECT)
+   ========================================================================== */
+.speed-meter-container {
+  margin-top: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.speed-meter-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.speed-meter {
+  display: flex;
+  gap: 4px;
+  width: 80%;
+  height: 12px;
+}
+
+.speed-segment {
+  flex: 1;
+  background: #222;
+  border: 1px solid #111;
+  transition: all 0.3s;
+}
+
+.speed-segment.off {
+  background: #1a1a1a;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+.speed-segment.green {
+  background: #39ff14;
+  box-shadow: 0 0 10px #39ff14, inset 0 0 5px #fff;
+  border-color: #39ff14;
+}
+
+.speed-segment.yellow {
+  background: #ffea00;
+  box-shadow: 0 0 10px #ffea00, inset 0 0 5px #fff;
+  border-color: #ffea00;
+}
+
+.speed-segment.red {
+  background: #ff073a;
+  box-shadow: 0 0 10px #ff073a, inset 0 0 5px #fff;
+  border-color: #ff073a;
+}
+
+.arcade-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 4px solid var(--text-muted);
+  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  text-align: center;
+  padding: 1rem;
+  outline: none;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+
+.input-p1 .arcade-label { color: var(--accent-p1); text-shadow: 0 0 10px var(--accent-p1-glow); }
+.input-p1 .arcade-input:focus { border-bottom-color: var(--accent-p1); box-shadow: 0 10px 10px -10px var(--accent-p1); text-shadow: 0 0 10px var(--accent-p1); }
+
+.input-p2 .arcade-label { color: var(--accent-p2); text-shadow: 0 0 10px var(--accent-p2-glow); }
+.input-p2 .arcade-input:focus { border-bottom-color: var(--accent-p2); box-shadow: 0 10px 10px -10px var(--accent-p2); text-shadow: 0 0 10px var(--accent-p2); }
+
+/* ===== Botones ===== */
+.btn-arcade {
+  background: transparent;
+  border: 4px solid var(--accent-neutral);
+  color: var(--accent-neutral);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5rem;
+  padding: 1.2rem 2rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px var(--accent-neutral-glow), inset 0 0 15px var(--accent-neutral-glow);
+  text-shadow: 0 0 10px var(--accent-neutral-glow);
+  transition: all 0.1s;
+  animation: blink 1.5s infinite step-end;
+  margin-top: 2rem;
+}
+
+.giant-btn {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  padding: 1.5rem 4rem;
+  border-width: 6px;
+}
+
+.btn-arcade:hover:not(:disabled) {
+  background: var(--accent-neutral);
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 30px var(--accent-neutral), inset 0 0 10px #000;
+}
+
+.btn-arcade:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn-arcade:disabled {
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+  box-shadow: none;
+  text-shadow: none;
+  animation: none;
+  cursor: not-allowed;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ===== Helpers ===== */
+.hidden { display: none !important; }
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.alert-arcade {
+  margin-top: 1rem;
+  color: #ff0;
+  font-size: 0.8rem;
+  text-align: center;
+  text-shadow: 0 0 5px #ff0;
+}
+
+/* Botón flotante para volver */
+.btn-back {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.btn-back:hover {
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+}
+
+

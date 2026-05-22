@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake 1v1 — VERSUS</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="stylesheet" href="/styles/game.css" />
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  
+  <div class="top-nav-bar">
+    <a href="/levels" class="btn-back">← VOLVER A NIVELES</a>
+  </div>
+
+  <div class="arcade-machine-frame main-with-nav fade-in container-fluid p-0">
+    <div class="row h-100 g-0 w-100">
+      
+      <!-- Panel Izquierdo J1 -->
+      <div class="col-6 col-xl-2 order-1 order-xl-1 side-panel left-panel d-flex flex-column justify-content-center align-items-center position-relative">
+        <div class="panel-watermark p1-watermark d-none d-xl-block position-absolute">J1</div>
+        <div class="side-hud p1-hud w-100 position-relative z-3">
+          <div class="player-score p1-score text-center" id="score-box-p1">
+            <span class="score-name d-block" id="name-p1">J1</span>
+            <span class="score-value" id="score-p1">0</span>
+          </div>
+          <div class="joystick-hint j1-hint text-center d-none d-xl-flex">
+            <span class="d-inline-flex mx-1">[W]</span><span class="d-inline-flex mx-1">[A]</span><span class="d-inline-flex mx-1">[S]</span><span class="d-inline-flex mx-1">[D]</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centro: El Juego Gigante -->
+      <div class="col-12 col-xl-8 order-3 order-xl-2 center-screen maximized d-flex flex-column align-items-center justify-content-center position-relative">
+        
+        <div class="top-panel text-center w-100">
+          <div id="level-display" class="level-indicator mx-auto">NIVEL X</div>
+        </div>
+
+        <div class="canvas-bezel maximized-bezel mx-auto">
+          <div class="canvas-wrapper position-relative" id="canvas-wrapper">
+            <canvas id="game-canvas"></canvas>
+
+            <div class="game-overlay text-center position-absolute top-50 start-50 translate-middle w-100" id="game-overlay">
+              <div class="overlay-title" id="overlay-title">SNAKE 1VS1</div>
+              <div class="overlay-subtitle" id="overlay-subtitle">¿LISTOS?</div>
+              <button class="btn-game-action mt-3" id="btn-start">PRESIONA INICIO</button>
+              <button class="btn-game-action hidden mt-3" id="btn-restart">INSERTA FICHA</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-panel text-center w-100">
+          <div class="arcade-controls-board maximized-board mx-auto">
+            <div class="credits-text blink-text">CREDITS: FREE PLAY</div>
+          </div>
+        </div>
+
+        <div id="status-msg" class="alert-arcade hidden mx-auto"></div>
+
+      </div> <!-- Fin Centro -->
+
+      <!-- Panel Derecho J2 -->
+      <div class="col-6 col-xl-2 order-2 order-xl-3 side-panel right-panel d-flex flex-column justify-content-center align-items-center position-relative">
+        <div class="panel-watermark p2-watermark d-none d-xl-block position-absolute">J2</div>
+        <div class="side-hud p2-hud w-100 position-relative z-3">
+          <div class="player-score p2-score text-center" id="score-box-p2">
+            <span class="score-name d-block" id="name-p2">J2</span>
+            <span class="score-value" id="score-p2">0</span>
+          </div>
+          <div class="joystick-hint j2-hint text-center d-none d-xl-flex">
+            <span class="d-inline-flex mx-1">[▲]</span><span class="d-inline-flex mx-1">[◄]</span><span class="d-inline-flex mx-1">[▼]</span><span class="d-inline-flex mx-1">[►]</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="/scripts/game.js"></script>
+</body>
+</html>

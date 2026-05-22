@@ -1,0 +1,14 @@
+{
+  "name": "snakes-game",
+  "version": "1.0.0",
+  "description": "Juego Snake 1v1 con sistema de niveles y usuarios",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
