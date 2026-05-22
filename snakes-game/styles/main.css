@@ -359,4 +359,80 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   text-shadow: 0 0 5px #fff;
 }
 
+/* ===== Botones de Selección de Modo (Arcade) ===== */
+.btn-mode {
+  background: rgba(10, 10, 20, 0.7);
+  border: 3px solid var(--text-muted);
+  color: var(--text-muted);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  padding: 1rem 0.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  border-radius: 8px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+  min-height: 85px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 1.4;
+  letter-spacing: 1px;
+}
+
+.btn-mode:hover:not(.disabled-mode) {
+  border-color: #fff;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255,255,255,0.1), inset 0 0 10px rgba(255,255,255,0.1);
+}
+
+.btn-mode.active[data-mode="solo"] {
+  border-color: var(--accent-neutral);
+  color: var(--accent-neutral);
+  box-shadow: 0 0 20px var(--accent-neutral-glow), inset 0 0 15px var(--accent-neutral-glow);
+  text-shadow: 0 0 5px var(--accent-neutral-glow);
+}
+
+.btn-mode.active[data-mode="bot"] {
+  border-color: #b026ff;
+  color: #b026ff;
+  box-shadow: 0 0 20px rgba(176, 38, 255, 0.6), inset 0 0 15px rgba(176, 38, 255, 0.4);
+  text-shadow: 0 0 5px rgba(176, 38, 255, 0.8);
+}
+
+.btn-mode.active[data-mode="local"] {
+  border-color: var(--accent-p1);
+  color: var(--accent-p1);
+  box-shadow: 0 0 20px var(--accent-p1-glow), inset 0 0 15px var(--accent-p1-glow);
+  text-shadow: 0 0 5px var(--accent-p1-glow);
+}
+
+.btn-mode.active[data-mode="turn"] {
+  border-color: #f97316;
+  color: #f97316;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), inset 0 0 15px rgba(249, 115, 22, 0.4);
+  text-shadow: 0 0 5px rgba(249, 115, 22, 0.8);
+}
+
+/* Modos bloqueados o deshabilitados */
+.btn-mode.disabled-mode {
+  opacity: 0.45;
+  border-color: #ff073a !important;
+  color: #ff073a !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.btn-mode.disabled-mode small {
+  color: #ff073a !important;
+}
+
+.btn-mode.disabled-mode:hover {
+  transform: none;
+}
+
+
 

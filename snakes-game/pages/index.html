@@ -18,16 +18,47 @@
       <h1 class="arcade-title giant-title">SNAKE<br>1VS1</h1>
     </div>
 
+    <!-- Selector de Modos de Juego -->
+    <div id="mode-selector-section" class="w-100 text-center mb-4" style="max-width: 1100px; padding: 0 4vw;">
+      <h2 class="arcade-label mb-3" style="font-size: 1rem; color: var(--text-primary); letter-spacing: 2px;">MODO DE JUEGO</h2>
+      <div class="row g-3 justify-content-center">
+        <div class="col-6 col-md-3">
+          <button type="button" class="btn-mode w-100 active" data-mode="solo" id="btn-mode-solo">
+            <span class="d-block mb-2">SOLITARIO</span>
+            <small style="font-size: 0.5rem; font-family: monospace;">PUNTOS</small>
+          </button>
+        </div>
+        <div class="col-6 col-md-3">
+          <button type="button" class="btn-mode w-100" data-mode="bot" id="btn-mode-bot">
+            <span class="d-block mb-2">VS BOT</span>
+            <small style="font-size: 0.5rem; font-family: monospace;">CONTRA IA</small>
+          </button>
+        </div>
+        <div class="col-6 col-md-3">
+          <button type="button" class="btn-mode w-100" data-mode="local" id="btn-mode-local">
+            <span class="d-block mb-2">1V1 LOCAL</span>
+            <small style="font-size: 0.5rem; font-family: monospace;">1 TECLADO</small>
+          </button>
+        </div>
+        <div class="col-6 col-md-3">
+          <button type="button" class="btn-mode w-100" data-mode="turn" id="btn-mode-turn">
+            <span class="d-block mb-2">POR TURNOS</span>
+            <small style="font-size: 0.5rem; font-family: monospace;">HOTSEAT</small>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <form id="names-form" class="fullscreen-form w-100" novalidate style="max-width: 1400px; padding: 0 4vw;">
       <div class="row w-100 g-4 align-items-center justify-content-center">
-        <div class="col-12 col-md-5 input-p1 player-col text-center">
+        <div id="col-p1" class="col-12 col-md-8 player-col text-center">
           <label class="arcade-label d-block mb-2" for="name-p1">NOMBRE J1</label>
           <input type="text" id="name-p1" class="arcade-input w-100" placeholder="JUGADOR 1" maxlength="10" required autocomplete="off" spellcheck="false" />
         </div>
 
-        <div class="col-12 col-md-2 vs-text text-center my-3 my-md-0">VS</div>
+        <div id="col-vs" class="col-12 col-md-2 vs-text text-center my-3 my-md-0 d-none">VS</div>
 
-        <div class="col-12 col-md-5 input-p2 player-col text-center">
+        <div id="col-p2" class="col-12 col-md-5 player-col text-center d-none">
           <label class="arcade-label d-block mb-2" for="name-p2">NOMBRE J2</label>
           <input type="text" id="name-p2" class="arcade-input w-100" placeholder="JUGADOR 2" maxlength="10" required autocomplete="off" spellcheck="false" />
         </div>

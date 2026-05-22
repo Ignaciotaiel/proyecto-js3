@@ -389,4 +389,210 @@
 /* Ocultar elementos */
 .hidden { display: none !important; }
 
+/* Efecto de atenuación para el HUD del jugador inactivo en Hotseat */
+.hud-dim {
+  opacity: 0.25 !important;
+  filter: grayscale(90%);
+  transition: all 0.3s ease;
+}
+
+.hud-highlight {
+  transform: scale(1.03);
+  transition: all 0.3s ease;
+}
+
+/* ===== D-Pad Táctil en Cruz Retro ===== */
+#mobile-dpad-container {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  #mobile-dpad-container {
+    display: flex !important;
+  }
+}
+
+/* El D-Pad es un círculo de fondo con una cruz negra de plástico */
+.retro-dpad {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, #2a2a2e 0%, #151518 70%, #0c0c0e 100%);
+  border-radius: 50%;
+  border: 4px solid #333;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.7),
+    inset 0 4px 10px rgba(255, 255, 255, 0.15),
+    0 0 15px var(--accent-neutral-glow); /* Led indicador por defecto */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+/* Colores de LED dinámicos según el turno/ronda */
+.retro-dpad.turn-p1 {
+  border-color: var(--accent-p1);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.7),
+    inset 0 4px 10px rgba(255, 255, 255, 0.15),
+    0 0 25px var(--accent-p1-glow);
+}
+
+.retro-dpad.turn-p2 {
+  border-color: var(--accent-p2);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.7),
+    inset 0 4px 10px rgba(255, 255, 255, 0.15),
+    0 0 25px var(--accent-p2-glow);
+}
+
+/* Cuerpo central en forma de cruz */
+.retro-dpad::before {
+  content: '';
+  position: absolute;
+  width: 110px;
+  height: 36px;
+  background: #0d0d10;
+  border-radius: 6px;
+  box-shadow: 
+    inset 0 2px 5px rgba(255,255,255,0.05),
+    0 4px 8px rgba(0,0,0,0.8);
+}
+
+.retro-dpad::after {
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 110px;
+  background: #0d0d10;
+  border-radius: 6px;
+  box-shadow: 
+    inset 2px 0 5px rgba(255,255,255,0.05),
+    0 4px 8px rgba(0,0,0,0.8);
+}
+
+/* Núcleo central */
+.dpad-center {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  background: #111115;
+  z-index: 5;
+  border-radius: 4px;
+}
+
+.dpad-center::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle, #25252b 0%, #0d0d10 80%);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Botones de dirección individuales */
+.dpad-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  z-index: 10;
+  outline: none;
+  cursor: pointer;
+}
+
+.dpad-btn:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Arriba */
+.dpad-up {
+  top: 10px;
+  left: 62px;
+  width: 36px;
+  height: 48px;
+  border-radius: 4px 4px 0 0;
+}
+
+.dpad-up::after {
+  content: '▲';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+/* Abajo */
+.dpad-down {
+  bottom: 10px;
+  left: 62px;
+  width: 36px;
+  height: 48px;
+  border-radius: 0 0 4px 4px;
+}
+
+.dpad-down::after {
+  content: '▼';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+/* Izquierda */
+.dpad-left {
+  top: 62px;
+  left: 10px;
+  width: 48px;
+  height: 36px;
+  border-radius: 4px 0 0 4px;
+}
+
+.dpad-left::after {
+  content: '◄';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+/* Derecha */
+.dpad-right {
+  top: 62px;
+  right: 10px;
+  width: 48px;
+  height: 36px;
+  border-radius: 0 4px 4px 0;
+}
+
+.dpad-right::after {
+  content: '►';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+/* Efectos activos en botones táctiles */
+.retro-dpad.turn-p1 .dpad-btn:active::after { color: var(--accent-p1) !important; text-shadow: 0 0 8px var(--accent-p1); }
+.retro-dpad.turn-p2 .dpad-btn:active::after { color: var(--accent-p2) !important; text-shadow: 0 0 8px var(--accent-p2); }
+.retro-dpad:not(.turn-p1):not(.turn-p2) .dpad-btn:active::after { color: var(--accent-neutral) !important; text-shadow: 0 0 8px var(--accent-neutral-glow); }
+
+
 
