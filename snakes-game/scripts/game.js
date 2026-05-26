@@ -66,13 +66,14 @@ function init() {
 
   if (levelDisplay) levelDisplay.textContent = `NIVEL ${level.id} [${level.speed}MS]`;
 
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
   const centerScreen = document.querySelector('.center-screen');
   let maxWidth = window.innerWidth * 0.95;
   let maxHeight = window.innerHeight * 0.75;
   if (centerScreen) {
     const rect = centerScreen.getBoundingClientRect();
     maxWidth = rect.width * 0.98;
-    maxHeight = rect.height * 0.78; 
+    maxHeight = isMobile ? rect.height * 0.42 : rect.height * 0.78; 
   }
   
   cellSize = Math.floor(Math.min(maxWidth, maxHeight) / level.grid);

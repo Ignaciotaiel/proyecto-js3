@@ -594,5 +594,156 @@
 .retro-dpad.turn-p2 .dpad-btn:active::after { color: var(--accent-p2) !important; text-shadow: 0 0 8px var(--accent-p2); }
 .retro-dpad:not(.turn-p1):not(.turn-p2) .dpad-btn:active::after { color: var(--accent-neutral) !important; text-shadow: 0 0 8px var(--accent-neutral-glow); }
 
+/* ===== Optimización Móvil Completa ===== */
+@media (max-width: 1199px) {
+  .side-panel {
+    height: 70px !important;
+  }
+  
+  .side-panel.left-panel {
+    border-right: none !important;
+    border-bottom: 2px solid var(--accent-p1) !important;
+  }
+  
+  .side-panel.right-panel {
+    border-left: none !important;
+    border-bottom: 2px solid var(--accent-p2) !important;
+  }
+
+  .side-hud {
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid #222 !important;
+    width: 90% !important;
+    margin: 0 auto !important;
+    justify-content: center !important;
+  }
+  
+  .p1-hud { border-color: var(--accent-p1) !important; }
+  .p2-hud { border-color: var(--accent-p2) !important; }
+
+  .player-score {
+    flex-direction: row !important;
+    padding: 0.2rem 0.6rem !important;
+    min-width: auto !important;
+    gap: 0.5rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .score-name {
+    font-size: 0.6rem !important;
+    margin-bottom: 0 !important;
+    display: inline-block !important;
+  }
+
+  .score-value {
+    font-size: 1.1rem !important;
+    line-height: 1 !important;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .center-screen {
+    height: calc(100vh - 60px - 70px) !important;
+    padding: 0.5rem !important;
+    justify-content: flex-start !important;
+  }
+  
+  .canvas-bezel.maximized-bezel {
+    padding: 0.4rem !important;
+    border-width: 3px !important;
+    border-radius: 8px !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  .canvas-wrapper {
+    border-width: 2px !important;
+  }
+
+  .bottom-panel {
+    display: none !important;
+  }
+
+  .level-indicator {
+    font-size: 0.6rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  #mobile-dpad-container {
+    margin-top: 0.8rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .retro-dpad {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .retro-dpad::before {
+    width: 95px !important;
+    height: 32px !important;
+  }
+
+  .retro-dpad::after {
+    width: 32px !important;
+    height: 95px !important;
+  }
+
+  .dpad-center {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .dpad-up {
+    top: 8px !important;
+    left: 54px !important;
+    width: 32px !important;
+    height: 42px !important;
+  }
+
+  .dpad-up::after {
+    top: 6px !important;
+  }
+
+  .dpad-down {
+    bottom: 8px !important;
+    left: 54px !important;
+    width: 32px !important;
+    height: 42px !important;
+  }
+
+  .dpad-down::after {
+    bottom: 6px !important;
+  }
+
+  .dpad-left {
+    top: 54px !important;
+    left: 8px !important;
+    width: 42px !important;
+    height: 32px !important;
+  }
+
+  .dpad-left::after {
+    left: 6px !important;
+  }
+
+  .dpad-right {
+    top: 54px !important;
+    right: 8px !important;
+    width: 42px !important;
+    height: 32px !important;
+  }
+
+  .dpad-right::after {
+    right: 6px !important;
+  }
+}
+
+
 
 
