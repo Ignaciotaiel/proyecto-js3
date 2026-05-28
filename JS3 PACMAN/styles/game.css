@@ -9,11 +9,26 @@
 }
 
 .canvas-section {
-  flex: 0 0 70%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  border-radius: 20px;
+  box-shadow: 
+    inset 0 0 100px rgba(0, 229, 255, 0.05),
+    0 0 30px rgba(0, 229, 255, 0.2);
+  padding: 15px;
   background: transparent;
+}
+
+/* CRT scanlines effect en canvas */
+.canvas-section::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+  background-size: 100% 4px;
+  border-radius: 20px;
+  z-index: 10;
+}
   position: relative;
   border-radius: 20px;
   box-shadow: 
@@ -45,7 +60,6 @@
 
 
 .side-panel {
-  flex: 0 0 30%;
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
@@ -175,7 +189,7 @@
 
 /* ─── D-pad táctil (mobile) ──────────────────────────────────────────────────── */
 .dpad-wrapper {
-  display: none;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
@@ -258,24 +272,25 @@
 /* ─── Responsive: mobile ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .game-wrapper {
-    flex-direction: column;
     height: auto;
     min-height: 100vh;
   }
-  .canvas-section {
-    flex: 0 0 auto;
-  }
   .side-panel {
-    flex: 1;
     border-left: none;
     border-top: 2px solid var(--pac-blue, #1a1aff);
-    flex-direction: row;
-    flex-wrap: wrap;
     padding: 0.75rem;
     gap: 0.5rem;
   }
   .dpad-wrapper {
-    display: flex;
+    /* Bootstrap classes handle visibility, but we can fine-tune here */
+  }
+  #dpad {
+    order: -2;
+  }
+  #action-buttons {
+    order: -1;
+    margin-top: 0 !important;
+    margin-bottom: 0.5rem;
   }
 }
 

@@ -36,7 +36,7 @@ function playTone(type, freq, dur, vol = 0.1, freqSlide = 0) {
   osc.type = type;
   osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
   if (freqSlide !== 0) {
-    osc.frequency.exponentialRampToValueAtTime(freq + freqSlide, audioCtx.currentTime + dur);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(freq + freqSlide, 10), audioCtx.currentTime + dur);
   }
 
   gain.gain.setValueAtTime(vol, audioCtx.currentTime);
@@ -51,35 +51,23 @@ function playTone(type, freq, dur, vol = 0.1, freqSlide = 0) {
 
 /**
  * Sonido clásico de "waka waka" al comer un punto.
- * Varía levemente para generar el efecto de ida y vuelta.
- * @param {boolean} isHigh - Para alternar entre tono alto y bajo
- * @returns {void}
  */
 export function playWaka(isHigh) {
   const freq = isHigh ? 300 : 250;
   playTone('triangle', freq, 0.1, 0.15, -50);
 }
 
-/**
- * Sonido al comer un power pellet (sirena aguda/ruido).
- * @returns {void}
- */
+/** Sonido al comer un power pellet (sirena aguda/ruido). */
 export function playPowerPellet() {
   playTone('sawtooth', 400, 0.3, 0.1, 400);
 }
 
-/**
- * Sonido al comer un fantasma asustado.
- * @returns {void}
- */
+/** Sonido al comer un fantasma asustado. */
 export function playEatGhost() {
   playTone('square', 800, 0.4, 0.2, -600);
 }
 
-/**
- * Sonido de muerte de PacMan.
- * @returns {void}
- */
+/** Sonido de muerte de PacMan. */
 export function playDeath() {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
@@ -95,10 +83,7 @@ export function playDeath() {
   osc.stop(audioCtx.currentTime + 1.5);
 }
 
-/**
- * Melodía de inicio de juego (simplificada).
- * @returns {void}
- */
+/** Melodía de inicio de juego (simplificada). */
 export function playGameStart() {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
@@ -127,10 +112,7 @@ export function playGameStart() {
   });
 }
 
-/**
- * Sonido de Game Over.
- * @returns {void}
- */
+/** Sonido de Game Over. */
 export function playGameOver() {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
@@ -146,10 +128,7 @@ export function playGameOver() {
   osc.stop(audioCtx.currentTime + 2);
 }
 
-/**
- * Melodía retro para cuando se sube de nivel (Level Up).
- * @returns {void}
- */
+/** Melodía retro para cuando se sube de nivel (Level Up). */
 export function playLevelUp() {
   if (!audioCtx) return;
   const t = audioCtx.currentTime;
@@ -179,19 +158,47 @@ export function playLevelUp() {
   });
 }
 
-/**
- * Sonido al agarrar el power-up de congelamiento.
- * @returns {void}
- */
+/** Sonido al agarrar el power-up de congelamiento. */
 export function playFreeze() {
   playTone('sine', 600, 0.4, 0.15, -300);
 }
 
-/**
- * Sonido al agarrar el power-up de puntos dobles.
- * @returns {void}
- */
+/** Sonido al agarrar el power-up de puntos dobles. */
 export function playDoublePoints() {
   playTone('triangle', 300, 0.5, 0.15, 600);
 }
 
+/* --- NUEVOS SONIDOS PARA MENÚS --- */
+
+/** Sonido de "Insert Coin" (campaneo agudo tipo arcade). */
+export function playInsertCoin() {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const vol = 0.2;
+  const notes = [
+    { f: 987.77, d: 0.1, s: 0 },   // B5
+    { f: 1318.51, d: 0.4, s: 0.1 } // E6
+  ];
+  notes.forEach((n) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = n.f;
+    gain.gain.setValueAtTime(vol, t + n.s);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + n.s + n.d);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t + n.s);
+    osc.stop(t + n.s + n.d);
+  });
+}
+
+/** Sonido al mover la selección en el menú (blip corto). */
+export function playMenuMove() {
+  playTone('square', 440, 0.05, 0.05, 0);
+}
+
+/** Sonido al confirmar o seleccionar en el menú (bloop agudo). */
+export function playMenuSelect() {
+  playTone('square', 880, 0.1, 0.08, 200);
+}

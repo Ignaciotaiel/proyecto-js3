@@ -75,7 +75,7 @@ body::after {
 }
 
 /* Ajustamos el contenido para que no quede tapado por la marquesina */
-#main-navbar, .players-page, .hero-section, .arcade-body {
+#main-navbar, .players-page, .hero-section, .arcade-body, .game-wrapper {
   padding-top: 70px !important; /* Espacio para la marquesina */
 }
 

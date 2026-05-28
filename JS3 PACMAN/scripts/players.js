@@ -6,6 +6,7 @@
 
 import { getSavedTheme, toggleTheme } from '../context/theme.js';
 import { fetchPlayers, registerPlayer } from '../modules/storage.js';
+import { initAudio, playMenuSelect, playInsertCoin } from '../modules/audio.js';
 
 // ─── Inicializar tema ─────────────────────────────────────────────────────────
 getSavedTheme();
@@ -88,8 +89,12 @@ function selectEmoji(emoji) {
 
 if (emojiGrid) {
   emojiGrid.addEventListener('click', (e) => {
+    initAudio();
     const btn = e.target.closest('.emoji-option');
-    if (btn?.dataset.emoji) selectEmoji(btn.dataset.emoji);
+    if (btn?.dataset.emoji) {
+      playMenuSelect();
+      selectEmoji(btn.dataset.emoji);
+    }
   });
 }
 
@@ -100,6 +105,8 @@ if (emojiGrid) {
  * @returns {Promise<void>}
  */
 async function handleRegister() {
+  initAudio();
+  playMenuSelect();
   if (!validateName()) return;
   const name = nameInput.value.trim();
   registerBtn.disabled = true;
@@ -203,7 +210,11 @@ function renderPlayerList(players) {
       </div>
       <div class="player-select-badge">✓</div>
     `;
-    item.addEventListener('click', () => selectPlayerFromList(player, item));
+    item.addEventListener('click', () => {
+      initAudio();
+      playMenuSelect();
+      selectPlayerFromList(player, item);
+    });
     playerList.appendChild(item);
   });
 }
@@ -223,7 +234,14 @@ function selectPlayerFromList(player, itemEl) {
   sessionStorage.setItem('active-player', JSON.stringify({ name: player.name, avatar: player.avatar }));
   if (selectedPlayerDisplay) selectedPlayerDisplay.style.display = 'block';
   if (selectedPlayerName) selectedPlayerName.textContent = `${player.avatar} ${player.name}`;
-  if (playBtn) playBtn.href = '/index.html';
+  if (playBtn) {
+    playBtn.href = '/index.html';
+    playBtn.addEventListener('click', (e) => {
+      initAudio();
+      playInsertCoin();
+      sessionStorage.setItem('skip-title', 'true');
+    });
+  }
 }
 
 /**

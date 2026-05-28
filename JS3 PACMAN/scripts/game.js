@@ -48,7 +48,13 @@ function resizeCanvas() {
   const section = document.getElementById('canvas-section');
   if (!section) return;
   const maxW = section.clientWidth - 40; // Margen para el gabinete
-  const maxH = section.clientHeight - 40;
+  let maxH = section.clientHeight - 40;
+
+  // En móviles, permitimos que el alto fluya según el ancho
+  if (window.innerWidth <= 768) {
+    maxH = 9999;
+  }
+
   const COLS = 28;
   const ROWS = 31;
   cellSize = Math.floor(Math.min(maxW / COLS, maxH / ROWS));
@@ -250,6 +256,11 @@ function handleDeath(pm) {
 }
 
 function handleLevelUp() {
+  const currentUnlocked = parseInt(localStorage.getItem('pacman-unlocked-levels') || '1', 10);
+  if (level + 1 > currentUnlocked && level + 1 <= 6) {
+    localStorage.setItem('pacman-unlocked-levels', (level + 1).toString());
+  }
+
   level++;
   if (level > 6) {
     triggerGameOver(true);
@@ -260,7 +271,7 @@ function handleLevelUp() {
   playLevelUp();
   
   const levelText = document.getElementById('levelup-text');
-  if (levelText) levelText.textContent = `NIVEL ${level}`;
+  if (levelText) levelText.textContent = `¡NIVEL ${level - 1} COMPLETADO!`;
   
   const modal = new bootstrap.Modal(document.getElementById('levelup-modal'));
   modal.show();

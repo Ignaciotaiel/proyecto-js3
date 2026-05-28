@@ -4,6 +4,7 @@
  */
 
 import { fetchPlayers } from '../modules/storage.js';
+import { initAudio, playInsertCoin, playMenuMove, playMenuSelect } from '../modules/audio.js';
 
 const EMOJIS = ['👾','🐱','🦊','🐸','🤖','👻','💀','🔥'];
 
@@ -63,11 +64,28 @@ function updateScreen() {
   });
 }
 
+function getUnlockedLevels() {
+  return parseInt(localStorage.getItem('pacman-unlocked-levels') || '1', 10);
+}
+
 function updateMenu(menuId, selectedIdx) {
   const menu = document.getElementById(menuId);
   if (!menu) return;
   const items = menu.querySelectorAll('li');
+  const unlocked = getUnlockedLevels();
   items.forEach((item, idx) => {
+    // Para el menú de niveles, aplicar estilos de bloqueo
+    if (menuId === 'menu-level') {
+      const level = parseInt(item.dataset.level || '1', 10);
+      if (level > unlocked) {
+        item.classList.add('locked');
+        item.style.opacity = '0.3';
+        if (!item.innerHTML.includes('🔒')) item.innerHTML = `🔒 ${item.innerHTML}`;
+      } else if (level < unlocked) {
+        if (!item.innerHTML.includes('✓')) item.innerHTML = `✓ ${item.innerHTML}`;
+      }
+    }
+
     if (idx === selectedIdx) {
       item.classList.add('selected');
     } else {
@@ -93,17 +111,24 @@ function updateSkinDisplay() {
 }
 
 document.addEventListener('keydown', (e) => {
-  // Check player
+  initAudio();
   const p1 = getActivePlayer();
-  if (!p1 && currentScreen > 0) {
-    window.location.href = '/players.html';
-    return;
-  }
 
   if (currentScreen === 0) {
+    if (!p1) {
+      playInsertCoin();
+      setTimeout(() => { window.location.href = '/players.html'; }, 200);
+      return;
+    }
+    playInsertCoin();
     currentScreen = 1;
     updateScreen();
     updateMenu('menu-mode', selectedModeIdx);
+    return;
+  }
+
+  if (!p1 && currentScreen > 0) {
+    window.location.href = '/players.html';
     return;
   }
 
@@ -112,10 +137,13 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'w' || e.key === 'ArrowUp') {
       selectedModeIdx = (selectedModeIdx - 1 + items.length) % items.length;
       updateMenu('menu-mode', selectedModeIdx);
+      playMenuMove();
     } else if (e.key === 's' || e.key === 'ArrowDown') {
       selectedModeIdx = (selectedModeIdx + 1) % items.length;
       updateMenu('menu-mode', selectedModeIdx);
+      playMenuMove();
     } else if (e.key === 'Enter' || e.key === ' ') {
+      playMenuSelect();
       currentScreen = 2;
       updateScreen();
       updateSkinDisplay();
@@ -127,10 +155,13 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'a' || e.key === 'ArrowLeft') {
       selectedSkinIdx = (selectedSkinIdx - 1 + SKINS.length) % SKINS.length;
       updateSkinDisplay();
+      playMenuMove();
     } else if (e.key === 'd' || e.key === 'ArrowRight') {
       selectedSkinIdx = (selectedSkinIdx + 1) % SKINS.length;
       updateSkinDisplay();
+      playMenuMove();
     } else if (e.key === 'Enter' || e.key === ' ') {
+      playMenuSelect();
       const mode = document.querySelectorAll('#menu-mode li')[selectedModeIdx].dataset.mode;
       if (mode === 'two_players' || mode === 'turns') {
         currentScreen = 3; // Avatar P2
@@ -151,10 +182,13 @@ document.addEventListener('keydown', (e) => {
       if (e.key === 'w' || e.key === 'ArrowUp') {
         selectedAvatarP2Idx = (selectedAvatarP2Idx - 1 + items.length) % items.length;
         updateMenu('menu-avatar-p2', selectedAvatarP2Idx);
+        playMenuMove();
       } else if (e.key === 's' || e.key === 'ArrowDown') {
         selectedAvatarP2Idx = (selectedAvatarP2Idx + 1) % items.length;
         updateMenu('menu-avatar-p2', selectedAvatarP2Idx);
+        playMenuMove();
       } else if (e.key === 'Enter' || e.key === ' ') {
+        playMenuSelect();
         currentScreen = 4; // Skin P2
         updateScreen();
         updateSkinDisplay();
@@ -167,10 +201,13 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'a' || e.key === 'ArrowLeft') {
       selectedSkinP2Idx = (selectedSkinP2Idx - 1 + SKINS.length) % SKINS.length;
       updateSkinDisplay();
+      playMenuMove();
     } else if (e.key === 'd' || e.key === 'ArrowRight') {
       selectedSkinP2Idx = (selectedSkinP2Idx + 1) % SKINS.length;
       updateSkinDisplay();
+      playMenuMove();
     } else if (e.key === 'Enter' || e.key === ' ') {
+      playMenuSelect();
       currentScreen = 5; // Level
       updateScreen();
       updateMenu('menu-level', selectedLevelIdx);
@@ -180,25 +217,50 @@ document.addEventListener('keydown', (e) => {
 
   if (currentScreen === 5) {
     const items = document.querySelectorAll('#menu-level li');
+    const unlocked = getUnlockedLevels();
+
     if (e.key === 'w' || e.key === 'ArrowUp') {
-      selectedLevelIdx = (selectedLevelIdx - 1 + items.length) % items.length;
+      do {
+        selectedLevelIdx = (selectedLevelIdx - 1 + items.length) % items.length;
+      } while (parseInt(items[selectedLevelIdx].dataset.level, 10) > unlocked);
       updateMenu('menu-level', selectedLevelIdx);
+      playMenuMove();
     } else if (e.key === 's' || e.key === 'ArrowDown') {
-      selectedLevelIdx = (selectedLevelIdx + 1) % items.length;
+      do {
+        selectedLevelIdx = (selectedLevelIdx + 1) % items.length;
+      } while (parseInt(items[selectedLevelIdx].dataset.level, 10) > unlocked);
       updateMenu('menu-level', selectedLevelIdx);
+      playMenuMove();
     } else if (e.key === 'Enter' || e.key === ' ') {
+      playMenuSelect();
       const mode = document.querySelectorAll('#menu-mode li')[selectedModeIdx].dataset.mode;
       const level = document.querySelectorAll('#menu-level li')[selectedLevelIdx].dataset.level;
-      const skin = SKINS[selectedSkinIdx].color;
-      const skinP2 = SKINS[selectedSkinP2Idx].color;
-      localStorage.setItem('pacman-selected-skin-p2', skinP2);
-      startGame(mode, level, skin);
+      if (parseInt(level, 10) <= unlocked) {
+        const skin = SKINS[selectedSkinIdx].color;
+        const skinP2 = SKINS[selectedSkinP2Idx].color;
+        localStorage.setItem('pacman-selected-skin-p2', skinP2);
+        startGame(mode, level, skin);
+      }
     }
     return;
   }
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Si venimos de players.html habiendo seleccionado un jugador, saltear la pantalla de título
+  if (sessionStorage.getItem('skip-title') === 'true' && getActivePlayer()) {
+    sessionStorage.removeItem('skip-title');
+    currentScreen = 1;
+    updateScreen();
+    updateMenu('menu-mode', selectedModeIdx);
+  } else if (getActivePlayer()) {
+    // Si ya hay jugador, en vez de INSERT COIN mostramos PRESS START
+    const prompt = document.querySelector('.insert-coin-prompt');
+    if (prompt) {
+      prompt.innerHTML = `PRESS START<br><br><span style="font-size:0.5em; opacity:0.8;">(PRESS ANY KEY)</span>`;
+    }
+  }
+
   // Cargar jugadores para P2
   try {
     const players = await fetchPlayers();
@@ -233,12 +295,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   document.getElementById('arcade-screen').addEventListener('click', () => {
+    initAudio();
     if (currentScreen === 0) {
       const p1 = getActivePlayer();
       if (!p1) {
-        window.location.href = '/players.html';
+        playInsertCoin();
+        setTimeout(() => { window.location.href = '/players.html'; }, 200);
         return;
       }
+      playInsertCoin();
       currentScreen = 1;
       updateScreen();
       updateMenu('menu-mode', selectedModeIdx);
@@ -249,6 +314,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   modeItems.forEach((li, idx) => {
     li.addEventListener('click', (e) => {
       e.stopPropagation();
+      initAudio();
+      playMenuSelect();
       selectedModeIdx = idx;
       updateMenu('menu-mode', selectedModeIdx);
       currentScreen = 2;
@@ -259,18 +326,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('skin-prev').addEventListener('click', (e) => {
     e.stopPropagation();
+    initAudio();
+    playMenuMove();
     selectedSkinIdx = (selectedSkinIdx - 1 + SKINS.length) % SKINS.length;
     updateSkinDisplay();
   });
 
   document.getElementById('skin-next').addEventListener('click', (e) => {
     e.stopPropagation();
+    initAudio();
+    playMenuMove();
     selectedSkinIdx = (selectedSkinIdx + 1) % SKINS.length;
     updateSkinDisplay();
   });
 
   document.getElementById('active-skin-preview').addEventListener('click', (e) => {
     e.stopPropagation();
+    initAudio();
+    playMenuSelect();
     const mode = document.querySelectorAll('#menu-mode li')[selectedModeIdx].dataset.mode;
     if (mode === 'two_players' || mode === 'turns') {
       currentScreen = 3; // Avatar P2
@@ -287,6 +360,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (skinP2Prev) {
     skinP2Prev.addEventListener('click', (e) => {
       e.stopPropagation();
+      initAudio();
+      playMenuMove();
       selectedSkinP2Idx = (selectedSkinP2Idx - 1 + SKINS.length) % SKINS.length;
       updateSkinDisplay();
     });
@@ -296,6 +371,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (skinP2Next) {
     skinP2Next.addEventListener('click', (e) => {
       e.stopPropagation();
+      initAudio();
+      playMenuMove();
       selectedSkinP2Idx = (selectedSkinP2Idx + 1) % SKINS.length;
       updateSkinDisplay();
     });
@@ -305,6 +382,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (skinP2Preview) {
     skinP2Preview.addEventListener('click', (e) => {
       e.stopPropagation();
+      initAudio();
+      playMenuSelect();
       currentScreen = 5; // Level
       updateScreen();
       updateMenu('menu-level', selectedLevelIdx);
@@ -315,14 +394,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   levelItems.forEach((li, idx) => {
     li.addEventListener('click', (e) => {
       e.stopPropagation();
-      selectedLevelIdx = idx;
-      updateMenu('menu-level', selectedLevelIdx);
-      const mode = document.querySelectorAll('#menu-mode li')[selectedModeIdx].dataset.mode;
-      const level = li.dataset.level;
-      const skin = SKINS[selectedSkinIdx].color;
-      const skinP2 = SKINS[selectedSkinP2Idx].color;
-      localStorage.setItem('pacman-selected-skin-p2', skinP2);
-      startGame(mode, level, skin);
+      initAudio();
+      const unlocked = getUnlockedLevels();
+      const level = parseInt(li.dataset.level, 10);
+      if (level <= unlocked) {
+        playMenuSelect();
+        selectedLevelIdx = idx;
+        updateMenu('menu-level', selectedLevelIdx);
+        const mode = document.querySelectorAll('#menu-mode li')[selectedModeIdx].dataset.mode;
+        const skin = SKINS[selectedSkinIdx].color;
+        const skinP2 = SKINS[selectedSkinP2Idx].color;
+        localStorage.setItem('pacman-selected-skin-p2', skinP2);
+        startGame(mode, level.toString(), skin);
+      }
     });
   });
 });

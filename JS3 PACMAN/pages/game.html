@@ -13,14 +13,15 @@
 </head>
 <body>
   <!-- Wrapper principal del juego -->
-  <div class="game-wrapper" id="game-wrapper">
-    <!-- Canvas de juego -->
-    <section class="canvas-section" id="canvas-section" aria-label="Canvas del juego">
-      <canvas id="game-canvas" aria-label="Área de juego PacMan"></canvas>
-    </section>
+  <div class="container-fluid p-0">
+    <div class="row g-0 game-wrapper" id="game-wrapper">
+      <!-- Canvas de juego -->
+      <section class="col-12 col-md-8 col-lg-9 canvas-section d-flex align-items-center justify-content-center" id="canvas-section" aria-label="Canvas del juego">
+        <canvas id="game-canvas" aria-label="Área de juego PacMan"></canvas>
+      </section>
 
-    <!-- Panel lateral -->
-    <aside class="side-panel" id="side-panel" aria-label="Panel de estado del juego">
+      <!-- Panel lateral -->
+      <aside class="col-12 col-md-4 col-lg-3 side-panel" id="side-panel" aria-label="Panel de estado del juego">
       <!-- Modo de juego badge -->
       <div class="text-center mb-2">
         <span id="mode-badge"
@@ -97,7 +98,7 @@
       </div>
 
       <!-- D-pad táctil -->
-      <div class="dpad-wrapper" id="dpad" aria-label="Controles táctiles">
+      <div class="dpad-wrapper d-flex d-md-none text-center" id="dpad" aria-label="Controles táctiles">
         <div class="dpad-row">
           <button class="dpad-btn" id="dpad-up" aria-label="Arriba">▲</button>
         </div>
@@ -109,7 +110,7 @@
       </div>
 
       <!-- Botones de control -->
-      <div class="d-flex gap-2 mt-auto flex-wrap">
+      <div class="d-flex gap-2 mt-auto flex-wrap" id="action-buttons">
         <button class="btn btn-sm btn-arcade flex-fill" id="pause-btn"
           style="font-family:'Press Start 2P',monospace; font-size:0.4rem;">
           ⏸ PAUSE
@@ -120,6 +121,7 @@
         </a>
       </div>
     </aside>
+    </div>
   </div>
 
   <!-- Modal: Game Over -->
@@ -186,7 +188,7 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content bg-transparent border-0 text-center">
         <div class="modal-body">
-          <div class="level-up-text" id="levelup-text">NIVEL 2</div>
+          <div class="level-up-text" id="levelup-text">¡NIVEL X COMPLETADO!</div>
         </div>
       </div>
     </div>
