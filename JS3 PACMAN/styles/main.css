@@ -1,0 +1,574 @@
+/* ─── main.css — Estilos globales y animaciones del landing ──────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&display=swap');
+
+/* ─── Variables CSS ──────────────────────────────────────────────────────────── */
+:root {
+  --pac-yellow: #FFD700;
+  --pac-blue: #1a1aff;
+  --pac-dark: #0a0a0a;
+  --pac-ghost-red: #FF0000;
+  --pac-ghost-pink: #FFB8FF;
+  --pac-ghost-cyan: #00FFFF;
+  --pac-ghost-orange: #FFB852;
+  --pac-neon-cyan: #00e5ff;
+  --pac-neon-pink: #ff00ff;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-main: 'Inter', sans-serif;
+  --transition: 0.3s ease;
+}
+
+/* ─── Reset y base ───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  /* Fondo base del mueble */
+  background-color: #000 !important;
+  color: #fff;
+}
+
+/* ─── Gabinete Arcade Físico 3D ──────────────────────────────────────────────── */
+/* Biseles profundos y Marquee superior */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9997; /* Justo debajo del efecto CRT */
+  /* Construcción de los biseles de plástico */
+  box-shadow: 
+    /* T-Molding exterior Neón */
+    inset 0 0 0 4px var(--pac-yellow),
+    /* Grosor del plástico exterior */
+    inset 0 0 0 10px #1a1a1a,
+    /* Sombra de hundimiento profundo hacia la pantalla CRT */
+    inset 0 0 150px 40px rgba(0, 0, 0, 1),
+    inset 0 0 50px 10px rgba(0, 0, 0, 0.9);
+}
+
+body::after {
+  /* La Marquesina (Marquee) retroiluminada en la parte superior */
+  content: "PAC-MAN ARCADE";
+  font-family: var(--font-pixel);
+  font-size: clamp(1rem, 3vw, 2rem);
+  color: #000;
+  text-shadow: 0 0 10px #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 5px;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, #ffdd00 0%, #ff8800 100%);
+  border-bottom: 5px solid #111;
+  box-shadow: 0 5px 30px rgba(255, 136, 0, 0.5), inset 0 0 15px rgba(255,255,255,0.8);
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* Ajustamos el contenido para que no quede tapado por la marquesina */
+#main-navbar, .players-page, .hero-section, .arcade-body {
+  padding-top: 70px !important; /* Espacio para la marquesina */
+}
+
+@media (max-width: 900px) {
+  body::before {
+    box-shadow: inset 0 0 50px 10px rgba(0, 0, 0, 1); /* Menos exagerado en móvil */
+  }
+}
+
+/* ─── CRT Scanline Overlay & Vignette ──────────────────────────────────────────── */
+html::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  /* Vignette y ligera curvatura en las esquinas simulada con shadow interno */
+  background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%);
+  z-index: 9998;
+  pointer-events: none;
+}
+
+html::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.08), rgba(0, 255, 0, 0.04), rgba(0, 0, 255, 0.08));
+  z-index: 9999;
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.6;
+  /* Animación de escaneo CRT */
+  animation: scanlines 10s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100vh; }
+}
+
+/* ─── Arcade Text Effects ────────────────────────────────────────────────────── */
+.arcade-blink {
+  animation: arcadeBlink 0.6s step-end infinite;
+}
+
+@keyframes arcadeBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.text-neon-yellow {
+  color: var(--pac-yellow);
+  text-shadow: 0 0 5px var(--pac-yellow), 0 0 10px var(--pac-yellow), 0 0 20px #ff8800;
+}
+
+.text-neon-pink {
+  color: var(--pac-neon-pink);
+  text-shadow: 0 0 5px var(--pac-neon-pink), 0 0 10px var(--pac-neon-pink), 0 0 20px #aa00aa;
+}
+
+.text-neon-cyan {
+  color: var(--pac-neon-cyan);
+  text-shadow: 0 0 5px var(--pac-neon-cyan), 0 0 10px var(--pac-neon-cyan), 0 0 20px #0099aa;
+}
+
+.insert-coin {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  color: var(--pac-yellow);
+  text-align: center;
+  margin-top: 2rem;
+  animation: arcadeBlink 0.8s step-end infinite;
+  letter-spacing: 4px;
+}
+
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Arcade Menus (Pure Arcade Feel) ────────────────────────────────────────── */
+.arcade-body {
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  z-index: 101; /* Asegura que el contenido quede por encima del side-art sutil */
+}
+
+#arcade-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.arcade-view {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arcade-heading {
+  font-family: var(--font-pixel);
+  font-size: 2rem;
+  color: var(--pac-neon-pink);
+  text-shadow: 0 0 10px var(--pac-neon-pink);
+  margin-bottom: 3rem;
+  text-transform: uppercase;
+}
+
+.arcade-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.arcade-menu li {
+  font-family: var(--font-pixel);
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  opacity: 0.6;
+}
+
+.arcade-menu li.selected {
+  color: var(--pac-yellow);
+  opacity: 1;
+  text-shadow: 0 0 10px var(--pac-yellow);
+  transform: scale(1.1);
+}
+
+.arcade-menu li.selected::before {
+  content: "▶ ";
+  color: var(--pac-yellow);
+}
+
+.arrow-btn {
+  font-size: 3rem;
+  cursor: pointer;
+  color: var(--pac-neon-cyan);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.arrow-btn:active {
+  transform: scale(0.8);
+  color: #fff;
+}
+
+.insert-coin-prompt {
+  font-family: var(--font-pixel);
+  font-size: 1.5rem;
+  color: var(--pac-yellow);
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.menu-hint {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--pac-neon-cyan);
+  margin-top: 3rem;
+  opacity: 0.5;
+}
+
+.crt-box {
+  border: 4px solid var(--pac-yellow);
+  padding: 20px;
+  border-radius: 15px;
+  background: #111;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(255, 215, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-box::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.blink {
+  animation: arcadeBlink 0.8s step-end infinite;
+}
+
+.blink-slow {
+  animation: arcadeBlink 1.5s step-end infinite;
+}
+
+/* ─── Navbar ─────────────────────────────────────────────────────────────────── */
+.navbar-brand {
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  color: var(--pac-yellow) !important;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--pac-yellow);
+}
+
+.nav-link {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  transition: color var(--transition), text-shadow var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--pac-yellow) !important;
+  text-shadow: 0 0 8px var(--pac-yellow);
+}
+
+#theme-toggle {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform var(--transition);
+  color: inherit;
+}
+
+#theme-toggle:hover {
+  transform: rotate(20deg) scale(1.2);
+}
+
+/* ─── Landing hero ───────────────────────────────────────────────────────────── */
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+  padding: 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-bs-theme="dark"] .hero-section,
+[data-bs-theme="light"] .hero-section {
+  background: #000;
+}
+
+/* ─── Título principal ───────────────────────────────────────────────────────── */
+.logo-container {
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.logo-ghosts {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: -10px;
+}
+
+.ghost-neon {
+  font-size: 1.5rem;
+  animation: ghostBob 2s ease-in-out infinite alternate;
+}
+
+@keyframes ghostBob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+.game-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(2rem, 8vw, 5rem);
+  color: var(--pac-yellow);
+  text-shadow:
+    0 0 10px var(--pac-yellow),
+    0 0 30px var(--pac-yellow),
+    0 0 60px #ff8800;
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 0;
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% { transform: scale(1); text-shadow: 0 0 10px var(--pac-yellow), 0 0 30px var(--pac-yellow), 0 0 60px #ff8800; }
+  50% { transform: scale(1.05); text-shadow: 0 0 20px var(--pac-yellow), 0 0 40px var(--pac-yellow), 0 0 80px #ff8800; }
+}
+
+.neon-blink {
+  animation: neonFlicker 2s infinite alternate;
+}
+
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px var(--pac-neon-pink), 0 0 20px var(--pac-neon-pink), 0 0 40px var(--pac-neon-pink);
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.5;
+  }
+}
+
+
+/* ─── Tarjetas de modo (Botones Físicos Arcade) ────────────────────────────────── */
+.mode-card {
+  cursor: pointer;
+  border: 4px solid #333;
+  transition: all var(--transition);
+  border-radius: 8px;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease both;
+  background: linear-gradient(145deg, #1a1a1a, #050505);
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
+  transform: translateY(0);
+}
+
+.mode-card:hover {
+  border-color: var(--pac-yellow);
+  background: linear-gradient(145deg, #222, #0a0a0a);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.2), 0 10px 25px rgba(255, 215, 0, 0.4), 0 0 15px var(--pac-yellow);
+}
+
+.mode-card:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.4), 0 2px 5px rgba(255, 215, 0, 0.2);
+}
+
+.mode-card:nth-child(1) { animation-delay: 0.1s; }
+.mode-card:nth-child(2) { animation-delay: 0.2s; }
+.mode-card:nth-child(3) { animation-delay: 0.3s; }
+.mode-card:nth-child(4) { animation-delay: 0.4s; }
+
+.mode-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.mode-title {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+}
+
+/* ─── Fantasmas animados del landing ─────────────────────────────────────────── */
+.floating-ghosts {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ghost-emoji {
+  position: absolute;
+  font-size: 2rem;
+  animation: floatGhost 6s ease-in-out infinite;
+  opacity: 0.15;
+  filter: blur(0.5px);
+}
+
+.ghost-emoji:nth-child(1) { left: 5%;  top: 20%; animation-delay: 0s;    animation-duration: 5s; }
+.ghost-emoji:nth-child(2) { left: 80%; top: 15%; animation-delay: 1s;    animation-duration: 7s; }
+.ghost-emoji:nth-child(3) { left: 15%; top: 70%; animation-delay: 2s;    animation-duration: 6s; }
+.ghost-emoji:nth-child(4) { left: 70%; top: 65%; animation-delay: 0.5s;  animation-duration: 8s; }
+.ghost-emoji:nth-child(5) { left: 45%; top: 10%; animation-delay: 1.5s;  animation-duration: 5.5s; }
+.ghost-emoji:nth-child(6) { left: 90%; top: 50%; animation-delay: 3s;    animation-duration: 6.5s; }
+
+@keyframes floatGhost {
+  0%, 100% { transform: translateY(0) scale(1); }
+  33% { transform: translateY(-20px) scale(1.05); }
+  66% { transform: translateY(10px) scale(0.95); }
+}
+
+/* ─── PacMan corriendo en el landing ────────────────────────────────────────── */
+.pacman-runner {
+  position: absolute;
+  bottom: 80px;
+  font-size: 1.8rem;
+  animation: pacmanRun 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pacmanRun {
+  0%   { left: -5%; }
+  100% { left: 105%; }
+}
+
+/* ─── Animaciones generales ──────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Skin Selection ────────────────────────────────────────────────────────── */
+.skin-card {
+  cursor: pointer;
+  border: 3px solid transparent;
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.skin-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+}
+
+.skin-card.selected {
+  border-color: var(--pac-neon-pink);
+  box-shadow: 0 0 20px var(--pac-neon-pink);
+  animation: skinNeonBlink 1s ease-in-out infinite alternate;
+}
+
+@keyframes skinNeonBlink {
+  from { box-shadow: 0 0 5px var(--pac-neon-pink); border-color: rgba(255, 0, 255, 0.5); }
+  to { box-shadow: 0 0 25px var(--pac-neon-pink); border-color: rgba(255, 0, 255, 1); }
+}
+
+.pacman-preview {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.pacman-preview::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: 50%;
+  clip-path: polygon(100% 74%, 50% 50%, 100% 26%, 100% 0%, 0% 0%, 0% 100%, 100% 100%);
+  animation: previewMouth 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes previewMouth {
+  from { clip-path: polygon(100% 74%, 50% 50%, 100% 26%, 100% 0%, 0% 0%, 0% 100%, 100% 100%); }
+  to { clip-path: polygon(100% 50%, 50% 50%, 100% 50%, 100% 0%, 0% 0%, 0% 100%, 100% 100%); }
+}
+
+.skin-label {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  color: #fff;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────────── */
+footer {
+  font-family: var(--font-pixel);
+  font-size: 0.45rem;
+  letter-spacing: 1px;
+  padding: 1rem;
+  text-align: center;
+  opacity: 0.5;
+}
+
+/* ─── Scrollbar custom ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--pac-blue); border-radius: 3px; }
