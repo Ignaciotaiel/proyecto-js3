@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PacMan JS3 — Arcade Menu</title>
+  <meta name="description" content="Juego clásico de PacMan en JavaScript." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+  <!-- Conservamos bootstrap grid pero el diseño será custom arcade -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body class="arcade-body">
+
+  <div id="arcade-screen">
+    
+    <!-- PANTALLA 1: TITULO -->
+    <div id="screen-title" class="arcade-view active-view">
+      <div class="logo-container">
+        <h1 class="game-title">PAC-MAN</h1>
+        <div class="logo-ghosts mt-3">
+          <span class="ghost-neon" style="color:#FF0000; text-shadow:0 0 10px #FF0000;">👻</span>
+          <span class="ghost-neon" style="color:#FFB8FF; text-shadow:0 0 10px #FFB8FF;">👻</span>
+          <span class="ghost-neon" style="color:#00FFFF; text-shadow:0 0 10px #00FFFF;">👻</span>
+          <span class="ghost-neon" style="color:#FFB852; text-shadow:0 0 10px #FFB852;">👻</span>
+        </div>
+      </div>
+      <div class="insert-coin-prompt blink">INSERT COIN<br><br><span style="font-size:0.5em; opacity:0.8;">(PRESS ANY KEY)</span></div>
+    </div>
+
+    <!-- PANTALLA 2: MODO -->
+    <div id="screen-mode" class="arcade-view d-none">
+      <h2 class="arcade-heading">SELECT MODE</h2>
+      <ul class="arcade-menu" id="menu-mode">
+        <li data-mode="solo" class="selected">1 PLAYER</li>
+        <li data-mode="two_players">2 PLAYERS</li>
+        <li data-mode="vs_bot">VS BOT</li>
+        <li data-mode="turns">TURNS</li>
+      </ul>
+      <div class="menu-hint blink-slow">USE W/S AND ENTER</div>
+    </div>
+
+    <!-- PANTALLA 3: SKIN P1 -->
+    <div id="screen-skin" class="arcade-view d-none">
+      <h2 class="arcade-heading blink" style="color:var(--pac-yellow); text-shadow:0 0 15px var(--pac-yellow);">1UP - SELECT SKIN</h2>
+      <div class="skin-selector d-flex align-items-center justify-content-center gap-5 mt-4">
+        <span class="arrow-btn" id="skin-prev">◀</span>
+        <div class="skin-display crt-box">
+          <div id="active-skin-preview" class="pacman-preview" style="background:#FFD700; width:80px; height:80px;"></div>
+          <div id="active-skin-name" class="skin-label mt-4" style="font-size:1rem; color:var(--pac-yellow);">AMARILLO</div>
+        </div>
+        <span class="arrow-btn" id="skin-next">▶</span>
+      </div>
+      <div class="menu-hint blink-slow" style="margin-top: 5rem;">USE A/D AND ENTER</div>
+    </div>
+
+    <!-- PANTALLA 3.5: PERSONAJE P2 -->
+    <div id="screen-avatar-p2" class="arcade-view d-none">
+      <h2 class="arcade-heading blink" style="color:#FF69B4; text-shadow:0 0 15px #FF69B4;">2UP - SELECT PLAYER</h2>
+      <ul class="arcade-menu mt-3" id="menu-avatar-p2" style="max-height: 250px; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;">
+        <!-- Lista cargada dinámicamente -->
+        <li class="selected" data-name="GUEST" data-avatar="👾">👾 GUEST</li>
+      </ul>
+      <div class="menu-hint blink-slow mt-4">USE W/S AND ENTER</div>
+    </div>
+
+    <!-- PANTALLA 3.6: SKIN P2 -->
+    <div id="screen-skin-p2" class="arcade-view d-none">
+      <h2 class="arcade-heading blink" style="color:#FF69B4; text-shadow:0 0 15px #FF69B4;">2UP - SELECT SKIN</h2>
+      <div class="skin-selector d-flex align-items-center justify-content-center gap-5 mt-4">
+        <span class="arrow-btn" id="skin-p2-prev" style="color:#FF69B4;">◀</span>
+        <div class="skin-display crt-box" style="border-color:#FF69B4; box-shadow:0 0 20px rgba(255,105,180,0.5);">
+          <div id="active-skin-p2-preview" class="pacman-preview" style="background:#3333FF; width:80px; height:80px;"></div>
+          <div id="active-skin-p2-name" class="skin-label mt-4" style="font-size:1rem; color:#FF69B4;">AZUL</div>
+        </div>
+        <span class="arrow-btn" id="skin-p2-next" style="color:#FF69B4;">▶</span>
+      </div>
+      <div class="menu-hint blink-slow" style="margin-top: 5rem;">USE A/D AND ENTER</div>
+    </div>
+
+    <!-- PANTALLA 4: NIVEL -->
+    <div id="screen-level" class="arcade-view d-none">
+      <h2 class="arcade-heading">SELECT LEVEL</h2>
+      <ul class="arcade-menu" id="menu-level" style="font-size: 0.8rem; text-align: left; padding: 0;">
+        <li data-level="1" class="selected">LEVEL 1 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- CLASICO (VEL NORMAL)</span></li>
+        <li data-level="2">LEVEL 2 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- CLASICO (+10% VEL)</span></li>
+        <li data-level="3">LEVEL 3 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- PASILLOS ANGOSTOS</span></li>
+        <li data-level="4">LEVEL 4 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- LABERINTO TRAMPA</span></li>
+        <li data-level="5">LEVEL 5 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- ZONAS CERRADAS</span></li>
+        <li data-level="6">LEVEL 6 <span class="lvl-desc" style="color: #aaa; font-size: 0.6em; margin-left: 10px;">- DESAFIO FINAL</span></li>
+      </ul>
+      <div class="menu-hint blink-slow">USE W/S AND ENTER</div>
+    </div>
+
+  </div>
+
+  <script src="/scripts/main.js" type="module"></script>
+</body>
+</html>
