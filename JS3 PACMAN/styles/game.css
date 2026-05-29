@@ -187,40 +187,96 @@
   border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
-/* ─── D-pad táctil (mobile) ──────────────────────────────────────────────────── */
-.dpad-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 1rem;
+/* ─── Joystick Virtual (mobile) ──────────────────────────────────────────────── */
+#mobile-joystick-container {
+  display: none;
 }
 
-.dpad-row {
-  display: flex;
-  gap: 0.25rem;
+@media (max-width: 768px) {
+  #mobile-joystick-container {
+    display: flex !important;
+    justify-content: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
 }
 
-.dpad-btn {
-  width: 52px;
-  height: 52px;
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid rgba(255, 215, 0, 0.5);
-  border-radius: 8px;
-  font-size: 1.2rem;
+.joystick-base {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(10, 10, 20, 0.8) 0%, rgba(5, 5, 10, 0.95) 70%, rgba(0, 0, 0, 1) 100%);
+  border-radius: 50%;
+  border: 4px solid var(--pac-neon-cyan);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.8),
+    inset 0 4px 10px rgba(255, 255, 255, 0.1),
+    0 0 15px rgba(0, 229, 255, 0.4);
   display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  align-items: center;
+  touch-action: none;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  color: var(--pac-yellow, #FFD700);
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.dpad-btn:active {
-  background: rgba(255, 215, 0, 0.35);
-  transform: scale(0.93);
+/* Color dinámico para cambio de turnos en Pacman */
+.joystick-base.turn-p1 {
+  border-color: var(--pac-yellow);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.8),
+    inset 0 4px 10px rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.joystick-base.turn-p2 {
+  border-color: var(--pac-neon-pink);
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.8),
+    inset 0 4px 10px rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+.joystick-ring {
+  position: absolute;
+  width: 95px;
+  height: 95px;
+  border: 2px dashed rgba(0, 229, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.joystick-handle {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle at 35% 35%, #555 0%, #15151a 50%, #050508 100%);
+  border-radius: 50%;
+  box-shadow: 
+    0 6px 10px rgba(0,0,0,0.6),
+    inset 0 2px 4px rgba(255,255,255,0.4),
+    inset 0 -4px 8px rgba(0,0,0,0.8);
+  cursor: pointer;
+  z-index: 20;
+  will-change: transform;
+}
+
+.joystick-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #fff 0%, var(--pac-yellow) 45%, #5c5c00 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+}
+
+.joystick-base.turn-p2 .joystick-handle::after {
+  background: radial-gradient(circle, #fff 0%, var(--pac-neon-pink) 45%, #5c005c 100%);
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.8);
 }
 
 /* ─── Modales del juego ──────────────────────────────────────────────────────── */

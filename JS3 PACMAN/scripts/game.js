@@ -399,6 +399,20 @@ function updateScoreUI() {
 
   updateLivesDisplay('p1-lives', p1.lives);
   if (p2) updateLivesDisplay('p2-lives', p2.lives);
+
+  // Actualizar color de la base del Joystick dinámicamente según el turno activo
+  const joystick = document.getElementById('joystick-base');
+  if (joystick) {
+    if (mode === GameMode.TURNS) {
+      if (session.currentTurnIndex === 0) {
+        joystick.className = 'joystick-base turn-p1';
+      } else {
+        joystick.className = 'joystick-base turn-p2';
+      }
+    } else {
+      joystick.className = 'joystick-base turn-p1';
+    }
+  }
 }
 
 function updateLivesDisplay(id, lives) {
@@ -471,17 +485,119 @@ document.getElementById('pause-btn').onclick = togglePause;
 document.getElementById('resume-btn').onclick = togglePause;
 document.getElementById('restart-btn').onclick = () => window.location.reload();
 
-// D-pad
-['up', 'down', 'left', 'right'].forEach(dir => {
-  const btn = document.getElementById(`dpad-${dir}`);
-  if (btn) {
-    btn.onclick = () => {
-      if (!gameStarted) startGameSequence();
-      else if (!paused && !gameOver) session.handleInput({ up:'w', down:'s', left:'a', right:'d' }[dir]);
+// Configurar controles táctiles virtuales (Joystick)
+function initMobileControls() {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
+  
+  if (isMobile) {
+    const joystickContainer = document.getElementById('mobile-joystick-container');
+    if (joystickContainer) joystickContainer.classList.remove('d-none');
+
+    const base = document.getElementById('joystick-base');
+    const handle = document.getElementById('joystick-handle');
+    if (!base || !handle) return;
+
+    // Sintetizar eventos de teclado
+    const dispatchKey = (keyName) => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: keyName }));
     };
+
+    const triggerDirection = (dir) => {
+      if (!gameStarted) {
+        startGameSequence();
+        return;
+      }
+      
+      // En modo por turnos, si es el turno de J2, controlamos con las Flechas
+      // En cualquier otro modo, controlamos con WASD
+      if (mode === GameMode.TURNS && session.currentTurnIndex === 1) {
+        const map = { UP: 'ArrowUp', DOWN: 'ArrowDown', LEFT: 'ArrowLeft', RIGHT: 'ArrowRight' };
+        dispatchKey(map[dir]);
+      } else {
+        const map = { UP: 'w', DOWN: 's', LEFT: 'a', RIGHT: 'd' };
+        dispatchKey(map[dir]);
+      }
+    };
+
+    let dragging = false;
+    let centerX = 0;
+    let centerY = 0;
+    const maxRadius = 40; 
+    const deadzone = 12;  
+    let lastDirection = null;
+
+    const startDrag = (e) => {
+      dragging = true;
+      const rect = base.getBoundingClientRect();
+      centerX = rect.left + rect.width / 2;
+      centerY = rect.top + rect.height / 2;
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      moveHandle(clientX, clientY);
+    };
+
+    const doDrag = (e) => {
+      if (!dragging) return;
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      moveHandle(clientX, clientY);
+    };
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      lastDirection = null;
+      handle.style.transform = 'translate(0px, 0px)';
+    };
+
+    const moveHandle = (x, y) => {
+      let dx = x - centerX;
+      let dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance === 0) return;
+
+      let clampedX = dx;
+      let clampedY = dy;
+      if (distance > maxRadius) {
+        clampedX = (dx / distance) * maxRadius;
+        clampedY = (dy / distance) * maxRadius;
+      }
+
+      handle.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+
+      if (distance > deadzone) {
+        let dir = null;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          dir = dx > 0 ? 'RIGHT' : 'LEFT';
+        } else {
+          dir = dy > 0 ? 'DOWN' : 'UP';
+        }
+
+        if (dir && dir !== lastDirection) {
+          lastDirection = dir;
+          triggerDirection(dir);
+        }
+      }
+    };
+
+    // Táctil móvil
+    base.addEventListener('touchstart', startDrag, { passive: true });
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('touchend', endDrag, { passive: true });
+
+    // Mouse PC
+    base.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', endDrag);
   }
-});
+}
 
 // ─── Inicio ──────────────────────────────────────────────────────────────────
 initUI();
+initMobileControls();
 rafId = requestAnimationFrame(loop);
