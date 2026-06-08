@@ -6,6 +6,10 @@
 
 import { COLS, ROWS } from './board.js';
 
+// Carga de la imagen del árbitro temático FWC
+const refereeImage = new Image();
+refereeImage.src = '/assets/arbitro.png';
+
 /** @enum {string} Estados posibles de un fantasma */
 export const GhostState = {
   CHASE: 'chase',
@@ -23,6 +27,7 @@ const DIRECTIONS = [
 
 /**
  * BFS para encontrar el próximo paso hacia un destino.
+ * Incorpora un fallback al nodo transitable más cercano en caso de objetivos inaccesibles.
  * @param {{ col: number, row: number }} from - Posición origen
  * @param {{ col: number, row: number }} to - Posición destino
  * @param {import('./board.js').Board} board - Tablero actual
@@ -31,8 +36,12 @@ const DIRECTIONS = [
 function bfsNextStep(from, to, board) {
   const startCol = Math.round(from.col);
   const startRow = Math.round(from.row);
-  const targetCol = Math.round(to.col);
-  const targetRow = Math.round(to.row);
+  let targetCol = Math.round(to.col);
+  let targetRow = Math.round(to.row);
+  
+  // Clampear coordenadas de destino para evitar objetivos fuera de la grilla (ej. Pinky o Inky)
+  targetCol = Math.max(0, Math.min(COLS - 1, targetCol));
+  targetRow = Math.max(0, Math.min(ROWS - 1, targetRow));
   
   if (startCol === targetCol && startRow === targetRow) return null;
   
@@ -40,8 +49,18 @@ function bfsNextStep(from, to, board) {
   const queue = [{ col: startCol, row: startRow, path: [] }];
   visited.add(`${startCol},${startRow}`);
   
+  let closestNode = null;
+  let minDistance = Infinity;
+  
   while (queue.length > 0) {
     const current = queue.shift();
+    
+    // Rastrear el nodo visitado más cercano al objetivo (Distancia Manhattan)
+    const dist = Math.abs(current.col - targetCol) + Math.abs(current.row - targetRow);
+    if (dist < minDistance) {
+      minDistance = dist;
+      closestNode = current;
+    }
     
     // Priorizar direcciones para evitar trabones y hacer giros más limpios
     for (const dir of DIRECTIONS) {
@@ -66,6 +85,12 @@ function bfsNextStep(from, to, board) {
       queue.push({ col: wrappedCol, row: nr, path: newPath });
     }
   }
+  
+  // Si no se pudo llegar exactamente (ej. es una pared), ir hacia el nodo transitable más cercano
+  if (closestNode && closestNode.path.length > 0) {
+    return closestNode.path[0];
+  }
+  
   return null;
 }
 
@@ -114,7 +139,7 @@ export class Ghost {
     this.targetCol = col;
     this.targetRow = row;
     this.isTransitioning = false;
-    this.baseSpeed = 4.8; // celdas por segundo
+    this.baseSpeed = 5.2; // celdas por segundo
     this.isFrozen = false;
     
     /** @type {number} Delay inicial de spawn en segundos */
@@ -280,7 +305,7 @@ export class Ghost {
    * @returns {void}
    */
   /**
-   * Dibuja el fantasma en el canvas.
+   * Dibuja el fantasma (árbitro) en el canvas con temática FWC.
    * @param {CanvasRenderingContext2D} ctx
    * @param {number} cellSize
    * @param {number} tick
@@ -290,41 +315,65 @@ export class Ghost {
     if (this.currentDelay > 0) return;
     const x = this.col * cellSize + cellSize / 2;
     const y = this.row * cellSize + cellSize / 2;
-    const r = cellSize * 0.4;
 
     ctx.save();
     ctx.translate(x, y);
 
-    if (this.state === GhostState.FRIGHTENED) {
-      // Color azul marino neón con parpadeo blanco/azul de advertencia
-      const isWarning = this.frightenedTicks < 2.0; // Últimos 2 segundos
-      const blink = Math.floor(tick / 10) % 2 === 0;
-      
-      let ghostColor = '#0000BB'; // Azul neón oscuro
-      if (isWarning && blink) {
-        ghostColor = '#FFFFFF'; // Parpadeo blanco
-      }
-      
-      this._drawGhostBody(ctx, r, ghostColor);
-      this._drawEyes(ctx, r, true); // Ojos asustados
-      
-      // Efecto glow
-      ctx.shadowColor = ghostColor;
-      ctx.shadowBlur = 10;
-      this._drawGhostBody(ctx, r, ghostColor);
-    } else if (this.state === GhostState.EATEN) {
-      this._drawEyes(ctx, r, false); // Solo ojos
-    } else {
-      let bodyColor = this.color;
-      if (this.isFrozen) bodyColor = '#00FFFF'; // Color cian si está congelado
-      
-      this._drawGhostBody(ctx, r, bodyColor);
+    // 1. Dibujar anillo indicador de color del árbitro en los pies (estilo FIFA/PES cursor)
+    if (this.state !== GhostState.EATEN) {
+      ctx.beginPath();
+      ctx.ellipse(0, cellSize * 0.35, cellSize * 0.35, cellSize * 0.15, 0, 0, Math.PI * 2);
+      ctx.fillStyle = this.color + '55'; // Color traslúcido
+      ctx.fill();
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // 2. Dibujar cuerpo o eyes
+    if (this.state === GhostState.EATEN) {
+      const r = cellSize * 0.4;
       this._drawEyes(ctx, r, false);
-      
-      // Efecto glow neón
-      ctx.shadowColor = bodyColor;
-      ctx.shadowBlur = 8;
-      this._drawGhostBody(ctx, r, bodyColor);
+    } else {
+      if (refereeImage.complete) {
+        // Filtros de estado asustado o congelado
+        if (this.state === GhostState.FRIGHTENED) {
+          const isWarning = this.frightenedTicks < 2.0;
+          const blink = Math.floor(tick / 10) % 2 === 0;
+          if (isWarning && blink) {
+            ctx.filter = 'invert(1) grayscale(1) brightness(2)'; // Parpadeo blanco
+          } else {
+            ctx.filter = 'hue-rotate(200deg) brightness(0.7) saturate(2)'; // Azul marino neón
+          }
+        } else if (this.isFrozen) {
+          ctx.filter = 'hue-rotate(160deg) brightness(1.2) saturate(2)'; // Cian congelado
+        }
+
+        ctx.drawImage(refereeImage, -cellSize / 2, -cellSize / 2, cellSize, cellSize);
+        ctx.filter = 'none'; // reset
+
+        // Si está asustado dibujamos además los ojos "x_x" por encima del árbitro
+        if (this.state === GhostState.FRIGHTENED) {
+          const r = cellSize * 0.4;
+          this._drawEyes(ctx, r, true);
+        }
+      } else {
+        // Fallback vectorial clásico
+        const r = cellSize * 0.4;
+        if (this.state === GhostState.FRIGHTENED) {
+          const isWarning = this.frightenedTicks < 2.0;
+          const blink = Math.floor(tick / 10) % 2 === 0;
+          let ghostColor = '#0000BB';
+          if (isWarning && blink) ghostColor = '#FFFFFF';
+          this._drawGhostBody(ctx, r, ghostColor);
+          this._drawEyes(ctx, r, true);
+        } else {
+          let bodyColor = this.color;
+          if (this.isFrozen) bodyColor = '#00FFFF';
+          this._drawGhostBody(ctx, r, bodyColor);
+          this._drawEyes(ctx, r, false);
+        }
+      }
     }
 
     ctx.restore();

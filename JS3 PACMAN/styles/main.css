@@ -55,7 +55,7 @@ body::before {
 
 body::after {
   /* La Marquesina (Marquee) retroiluminada en la parte superior */
-  content: "PAC-MAN ARCADE";
+  content: "PAC-MAN MUNDIAL";
   font-family: var(--font-pixel);
   font-size: clamp(1rem, 3vw, 2rem);
   color: #000;
@@ -572,3 +572,98 @@ footer {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--pac-blue); border-radius: 3px; }
+
+/* ─── Botones Arcade Grandes y Visibles ─── */
+.btn-arcade, .btn-lg-arcade, .btn-refresh-arcade {
+  font-family: var(--font-pixel) !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+/* Botones de Pausa y Salir (Panel Lateral) */
+.btn-arcade {
+  font-size: 0.75rem !important; /* Más legible y grande en PC/móvil */
+  padding: 12px 18px !important;
+  border-radius: 8px !important;
+  border: 2px solid var(--pac-neon-cyan, #00e5ff) !important;
+  color: var(--pac-neon-cyan, #00e5ff) !important;
+  text-shadow: 0 0 5px var(--pac-neon-cyan, #00e5ff) !important;
+  box-shadow: inset 0 0 8px rgba(0, 229, 255, 0.2), 0 0 8px rgba(0, 229, 255, 0.2) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-arcade:hover {
+  background: var(--pac-neon-cyan, #00e5ff) !important;
+  color: #000 !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 15px var(--pac-neon-cyan, #00e5ff) !important;
+}
+
+/* Botones Grandes para Registro, Jugar y Modales */
+.btn-lg-arcade {
+  font-size: 0.85rem !important; /* Muy visible y cómodo de presionar */
+  padding: 14px 24px !important;
+  border-radius: 10px !important;
+  border: 2px solid transparent !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para los botones de advertencia neón (Registrar / ¡Jugar! / Nueva Partida / Continuar / Listo) */
+.btn-warning.btn-lg-arcade {
+  background: linear-gradient(180deg, #ffdd00 0%, #ff8800 100%) !important;
+  border-color: #ffaa00 !important;
+  color: #000 !important;
+  font-weight: bold !important;
+}
+
+.btn-warning.btn-lg-arcade:hover {
+  background: #ffdd00 !important;
+  box-shadow: 0 0 15px var(--pac-yellow), 0 0 25px #ff8800 !important;
+  transform: translateY(-2px);
+}
+
+.btn-warning.btn-lg-arcade:active {
+  transform: translateY(1px);
+}
+
+.btn-warning.btn-lg-arcade:disabled {
+  background: #444 !important;
+  border-color: #555 !important;
+  color: #888 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estilo para los botones secundarios (Inicio / Salir de Modales) */
+.btn-secondary.btn-lg-arcade {
+  background: linear-gradient(180deg, #333333 0%, #151515 100%) !important;
+  border-color: #555555 !important;
+  color: #ffffff !important;
+}
+
+.btn-secondary.btn-lg-arcade:hover {
+  background: #444444 !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+.btn-secondary.btn-lg-arcade:active {
+  transform: translateY(1px);
+}
+
+/* Botón de actualizar emojis */
+.btn-refresh-arcade {
+  font-size: 0.8rem !important;
+  padding: 8px 12px !important;
+  line-height: 1 !important;
+}

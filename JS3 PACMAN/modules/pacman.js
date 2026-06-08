@@ -5,6 +5,10 @@
 
 import { Cell, COLS, ROWS } from './board.js';
 
+// Carga de la imagen del jugador temático FWC
+const playerImage = new Image();
+playerImage.src = '/assets/jugador.png';
+
 /** Posición de spawn de PacMan (columna, fila) */
 const SPAWN_COL = 13;
 const SPAWN_ROW = 23;
@@ -51,7 +55,7 @@ export class PacMan {
     this.targetCol = spawnCol;
     this.targetRow = spawnRow;
     this.isTransitioning = false;
-    this.baseSpeed = 5.5; // celdas por segundo
+    this.baseSpeed = 6.0; // celdas por segundo
     
     /** @type {number} Posición pixel x (para render suave) */
     this.pixelX = spawnCol;
@@ -245,29 +249,51 @@ export class PacMan {
       // Girar y encogerse durante la muerte
       ctx.rotate((this.deathAngle * Math.PI) / 180);
       const shrink = Math.max(0.01, 1 - this.deathAngle / 720);
-      const mouth = this.mouthAngle * Math.PI;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.arc(0, 0, r * shrink, mouth, Math.PI * 2 - mouth);
-      ctx.closePath();
-      ctx.fillStyle = this.color;
-      ctx.fill();
+      if (playerImage.complete) {
+        ctx.drawImage(playerImage, -cellSize * shrink / 2, -cellSize * shrink / 2, cellSize * shrink, cellSize * shrink);
+      } else {
+        const mouth = this.mouthAngle * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, r * shrink, mouth, Math.PI * 2 - mouth);
+        ctx.closePath();
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
     } else {
-      const angle = DIRECTIONS[this.direction]?.angle ?? 0;
-      ctx.rotate(angle);
-      const mouth = this.mouthAngle * Math.PI;
+      // 1. Dibujar anillo indicador del jugador (estilo FIFA/PES cursors)
       ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.arc(0, 0, r, mouth, Math.PI * 2 - mouth);
-      ctx.closePath();
-      ctx.fillStyle = this.color;
+      ctx.ellipse(0, cellSize * 0.35, cellSize * 0.35, cellSize * 0.15, 0, 0, Math.PI * 2);
+      ctx.fillStyle = this.color + '55'; // Color del jugador traslúcido
       ctx.fill();
+      ctx.strokeStyle = this.color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
 
-      // Ojo
-      ctx.beginPath();
-      ctx.arc(r * 0.35, -r * 0.35, r * 0.12, 0, Math.PI * 2);
-      ctx.fillStyle = '#000';
-      ctx.fill();
+      // 2. Dibujar sprite del jugador o fallback vectorial
+      if (playerImage.complete) {
+        // Reflejar la imagen horizontalmente si se mueve a la izquierda
+        if (this.direction === 'left') {
+          ctx.scale(-1, 1);
+        }
+        ctx.drawImage(playerImage, -cellSize / 2, -cellSize / 2, cellSize, cellSize);
+      } else {
+        const angle = DIRECTIONS[this.direction]?.angle ?? 0;
+        ctx.rotate(angle);
+        const mouth = this.mouthAngle * Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, r, mouth, Math.PI * 2 - mouth);
+        ctx.closePath();
+        ctx.fillStyle = this.color;
+        ctx.fill();
+
+        // Ojo
+        ctx.beginPath();
+        ctx.arc(r * 0.35, -r * 0.35, r * 0.12, 0, Math.PI * 2);
+        ctx.fillStyle = '#000';
+        ctx.fill();
+      }
     }
 
     ctx.restore();

@@ -95,6 +95,16 @@ const MAP_L6 = MAP_L1.map((row, r) => row.map((cell, c) => {
   return cell;
 }));
 
+// Carga de imágenes temáticas FWC
+const dotImage = new Image();
+dotImage.src = '/assets/pelota-coins.png';
+
+const powerImage = new Image();
+powerImage.src = '/assets/worldcup-powerpellet.png';
+
+const doubleImage = new Image();
+doubleImage.src = '/assets/copa-bonus.png';
+
 export class Board {
   constructor() {
     /** @type {number[][]} Grilla de celdas actual */
@@ -170,6 +180,7 @@ export class Board {
    * @returns {boolean}
    */
   isWalkable(col, row) {
+    if (row === 14 && (col < 0 || col >= COLS)) return true;
     const cell = this.getCell(col, row);
     return cell !== Cell.WALL && cell !== Cell.GHOST_HOUSE && cell !== Cell.GHOST_DOOR;
   }
@@ -181,6 +192,7 @@ export class Board {
    * @returns {boolean}
    */
   isWalkableForGhost(col, row) {
+    if (row === 14 && (col < 0 || col >= COLS)) return true;
     const cell = this.getCell(col, row);
     return cell !== Cell.WALL;
   }
@@ -198,96 +210,101 @@ export class Board {
         const x = col * cellSize;
         const y = row * cellSize;
         const cell = this.grid[row][col];
-        this._drawCell(ctx, x, y, cellSize, cell, tick);
+        this._drawCell(ctx, x, y, cellSize, cell, tick, col, row);
       }
     }
   }
 
   /**
-   * Dibuja una celda individual del tablero con colores neón.
+   * Dibuja una celda individual del tablero con la temática FWC.
    * @private
    */
-  _drawCell(ctx, x, y, size, cell, tick) {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x, y, size, size);
+  _drawCell(ctx, x, y, size, cell, tick, col, row) {
+    // 1. Dibuja el fondo de césped si es una celda transitable
+    if (cell !== Cell.WALL && cell !== Cell.GHOST_HOUSE && cell !== Cell.GHOST_DOOR) {
+      // Efecto de franjas de césped vertical alternado
+      const stripe = Math.floor(col / 3) % 2;
+      ctx.fillStyle = stripe === 0 ? '#1b4d22' : '#225e29';
+      ctx.fillRect(x, y, size, size);
+    } else {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x, y, size, size);
+    }
 
     if (cell === Cell.WALL) {
-      // Colores de pared diferenciados por nivel
+      // Líneas de los estadios temáticos de la Copa del Mundo por nivel
       const colors = {
-        1: ['#1a1aff', '#0000aa'], // Azul clásico
-        2: ['#00e5ff', '#0099aa'], // Cian neón
-        3: ['#ff00ff', '#aa00aa'], // Magenta neón
-        4: ['#33ff33', '#11aa11'], // Verde neón
-        5: ['#ff9900', '#aa5500'], // Naranja neón
-        6: ['#ff0055', '#aa0033']  // Rojo/Fucsia neón
+        1: ['#ffffff', '#1b4d22'], // Líneas de cal (blanco) sobre base verde
+        2: ['#ffd700', '#255226'], // Dorado de la Copa del Mundo
+        3: ['#75aadb', '#1e3d59'], // Albiceleste (Argentina)
+        4: ['#009c3b', '#ffd700'], // Verde/Amarelo (Brasil)
+        5: ['#da291c', '#0a5c36'], // Rojo/Verde (Portugal)
+        6: ['#ffd700', '#111111']  // Oro y Negro (La gran final)
       };
-      const [neonColor, darkColor] = colors[this.currentLevel] || colors[6];
+      const [lineColor, wallBgColor] = colors[this.currentLevel] || colors[1];
 
-      ctx.fillStyle = darkColor;
-      ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
-      ctx.strokeStyle = neonColor;
-      ctx.lineWidth = 1.5;
+      ctx.fillStyle = wallBgColor;
+      ctx.fillRect(x, y, size, size);
+
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
       ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
 
-      // Efecto glow en las paredes
-      ctx.shadowColor = neonColor;
-      ctx.shadowBlur = 3;
+      // Efecto glow de iluminación del estadio
+      ctx.shadowColor = lineColor;
+      ctx.shadowBlur = 4;
       ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
       ctx.shadowBlur = 0; // reset shadow
     } else if (cell === Cell.DOT) {
-      const r = size * 0.12;
-      ctx.beginPath();
-      ctx.arc(x + size / 2, y + size / 2, r, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffff99';
-      ctx.fill();
-      // Pequeño brillo en los puntos
-      ctx.shadowColor = '#ffff99';
-      ctx.shadowBlur = 4;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
+      if (dotImage.complete) {
+        ctx.drawImage(dotImage, x + size * 0.1, y + size * 0.1, size * 0.8, size * 0.8);
+      } else {
+        const r = size * 0.12;
+        ctx.beginPath();
+        ctx.arc(x + size / 2, y + size / 2, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffff99';
+        ctx.fill();
+      }
     } else if (cell === Cell.POWER) {
       const blink = Math.floor(tick / 15) % 2 === 0;
       if (blink) {
-        const r = size * 0.3;
-        ctx.beginPath();
-        ctx.arc(x + size / 2, y + size / 2, r, 0, Math.PI * 2);
-        ctx.fillStyle = '#FFD700';
-        ctx.fill();
-        ctx.shadowColor = '#FFD700';
-        ctx.shadowBlur = 8;
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        if (powerImage.complete) {
+          ctx.drawImage(powerImage, x + size * 0.05, y + size * 0.05, size * 0.9, size * 0.9);
+        } else {
+          const r = size * 0.3;
+          ctx.beginPath();
+          ctx.arc(x + size / 2, y + size / 2, r, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFD700';
+          ctx.fill();
+        }
       }
     } else if (cell === Cell.GHOST_HOUSE) {
-      ctx.fillStyle = '#050515';
+      ctx.fillStyle = '#0a1d10'; // Vestuario / Banco de suplentes verde oscuro
       ctx.fillRect(x, y, size, size);
     } else if (cell === Cell.GHOST_DOOR) {
-      ctx.fillStyle = '#ff69b4';
+      ctx.fillStyle = '#ff3333'; // Línea roja de meta/gol
       ctx.fillRect(x, y + size * 0.4, size, size * 0.2);
     } else if (cell === Cell.FREEZE) {
       const blink = Math.floor(tick / 10) % 2 === 0;
       if (blink) {
         ctx.fillStyle = '#00FFFF';
-        ctx.shadowColor = '#00FFFF';
-        ctx.shadowBlur = 10;
         ctx.font = `${size * 0.8}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('❄️', x + size / 2, y + size / 2);
-        ctx.shadowBlur = 0;
       }
     } else if (cell === Cell.DOUBLE) {
       const blink = Math.floor(tick / 10) % 2 === 0;
       if (blink) {
-        ctx.fillStyle = '#FFFF00';
-        ctx.shadowColor = '#FFFF00';
-        ctx.shadowBlur = 10;
-        ctx.font = `bold ${size * 0.6}px "Press Start 2P"`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('x2', x + size / 2, y + size / 2);
-        ctx.shadowBlur = 0;
+        if (doubleImage.complete) {
+          ctx.drawImage(doubleImage, x + size * 0.05, y + size * 0.05, size * 0.9, size * 0.9);
+        } else {
+          ctx.fillStyle = '#FFFF00';
+          ctx.font = `bold ${size * 0.6}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('x2', x + size / 2, y + size / 2);
+        }
       }
     }
   }
